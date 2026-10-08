@@ -24,6 +24,8 @@ public class OrderPage {
 
     private final By deliveryDateField = By.xpath(".//input[@placeholder='* Когда привезти самокат']");
     private final By rentalPeriodDropdown = By.className("Dropdown-control");
+    private final By rentalPeriodOptionDay = By.xpath(".//div[text()='сутки']");
+    private final By datepickerCalendar = By.className("react-datepicker__calendar-container");
     private final By blackPearlCheckbox = By.id("black");
     private final By commentField = By.xpath(".//input[@placeholder='Комментарий для курьера']");
     private final By orderButton = By.xpath(".//div[contains(@class,'Order_Buttons')]/button[text()='Заказать']");
@@ -71,13 +73,12 @@ public class OrderPage {
         dateField.sendKeys(Keys.ENTER);
 
         // Ждём закрытия календаря
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                By.className("react-datepicker__calendar-container")));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(datepickerCalendar));
 
         // Срок аренды
         driver.findElement(rentalPeriodDropdown).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(".//div[text()='сутки']")));
-        driver.findElement(By.xpath(".//div[text()='сутки']")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(rentalPeriodOptionDay));
+        driver.findElement(rentalPeriodOptionDay).click();
 
         // Цвет
         driver.findElement(blackPearlCheckbox).click();
@@ -95,9 +96,8 @@ public class OrderPage {
         driver.findElement(confirmButton).click();
 
         // Ждём смену текста заголовка на "Заказ оформлен"
-        wait.until(ExpectedConditions.textToBe(
-                By.xpath(".//div[contains(@class,'Order_ModalHeader')]"),
-                "Заказ оформлен"));
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(
+                successMessage, "Заказ оформлен"));
     }
 
     public String getSuccessMessage() {
